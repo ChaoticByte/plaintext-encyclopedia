@@ -8,20 +8,20 @@
     <title>{{ if .EntryTitle }}{{ .EntryTitle }} - {{ end }}{{ .Title }}</title>
 </head>
 <body>
-<label class="sidebar-switch">
-    <div class="sidebar-symbol">&#x2261;</div>
-    <input type="checkbox" {{- if not .Entry }}checked{{ end }}>
-    <div class="sidebar">
-    {{- range .TOC -}}
-        <div><a href="{{ . }}">{{ . }}</a></div>
-    {{- end -}}
-    </div>
-</label>
+{{ if .Entry -}}
+<div class="homebtn"><a href="/">home</a></div>
 <div class="main">
     <h1>{{ .EntryTitle }}</h1>
     <div class="content">
         {{ .Entry }}
     </div>
 </div>
+{{- else -}}
+<div class="toc">
+    {{- range .TOC -}}
+        <div><a href="{{ . }}">{{ . }}</a></div>
+    {{- end -}}
+    </div>
+{{- end}}
 </body>
 </html>
