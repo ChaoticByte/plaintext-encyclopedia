@@ -2,7 +2,6 @@ package main
 
 import (
 	"html/template"
-	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -11,6 +10,7 @@ import (
 
 var logger *log.Logger
 var appTemplate *template.Template = template.New("app")
+var db Database
 
 type TemplateData struct {
 	TOC []string
@@ -21,21 +21,8 @@ type TemplateData struct {
 
 func loadTemplate() {
 	data, err := os.ReadFile(TemplateFile)
-	if err != nil { logger.Panic(err) }
+	if err != nil { logger.Panicln(err) }
 	appTemplate.Parse(string(data))
-}
-
-func getTOC() []string {
-	entriesDirFs := os.DirFS(EntriesDirectory)
-	m, err := fs.Glob(entriesDirFs, "*")
-	if err != nil { logger.Panic(err) }
-	return m
-}
-
-func getEntry(name string) (string, error) {
-	data, err := os.ReadFile(strings.TrimRight(EntriesDirectory, "/") + "/" + name)
-	if err != nil { return "", err }
-	return string(data), err
 }
 
 func handleApplication(w http.ResponseWriter, req *http.Request) {
@@ -50,13 +37,11 @@ func handleApplication(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		// load entry
-		entry, err = getEntry(entryName)
-		if err != nil {
-			logger.Println("Couldn't open entry", entryName)
-			w.WriteHeader(http.StatusNotFound)
-		}
+		entry = db.Entry(entryName)
 	}
-	err = appTemplate.ExecuteTemplate(w, "app", TemplateData{TOC: getTOC(), Entry: entry, Title: MainTitle, EntryTitle: entryName})
+	err = appTemplate.ExecuteTemplate(
+		w, "app",
+		TemplateData{TOC: db.TOC(), Entry: entry, Title: MainTitle, EntryTitle: entryName})
 	if err != nil { logger.Println(err) }
 }
 
@@ -65,6 +50,8 @@ func main() {
 	logger = log.Default()
 	// load template
 	loadTemplate()
+	// build db
+	db = BuildDB(EntriesDirectory)
 	// handle static files
 	staticHandler := http.StripPrefix("/static/", http.FileServer(http.Dir(StaticDirectory)))
 	http.Handle("/static/", staticHandler)
@@ -73,5 +60,5 @@ func main() {
 	// start server
 	logger.Println("Starting server on", ServerListen)
 	err := http.ListenAndServe(ServerListen, nil)
-	if err != nil { logger.Panic(err) }
+	if err != nil { logger.Panicln(err) }
 }
