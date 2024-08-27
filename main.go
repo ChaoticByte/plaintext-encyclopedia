@@ -37,11 +37,11 @@ func handleApplication(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		// load entry
-		entry = db.Entry(entryName)
+		entry = db.Entries[entryName]
 	}
 	err = appTemplate.ExecuteTemplate(
 		w, "app",
-		TemplateData{TOC: db.TOC(), Entry: entry, Title: MainTitle, EntryTitle: entryName})
+		TemplateData{TOC: db.Keys, Entry: entry, Title: MainTitle, EntryTitle: entryName})
 	if err != nil { logger.Println(err) }
 }
 

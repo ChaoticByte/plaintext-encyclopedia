@@ -7,47 +7,27 @@ import (
 	"strings"
 )
 
-type Entry struct {
-	Name string		// from filename
-	Content string	// from content
-}
-
 type Database struct {
-	Entries []Entry
-}
-
-func (db *Database) TOC() []string {
-	var names []string
-	for _, e := range db.Entries {
-		names = append(names, e.Name)
-	}
-	return names
-}
-
-func (db *Database) Entry(name string) string {
-	// returns empty string if not found
-	result := ""
-	for _, e := range db.Entries {
-		if e.Name == name {
-			result = e.Content
-		}
-	}
-	return result
+	Keys []string
+	Entries map[string]string
 }
 
 func BuildDB(directory string) Database {
 	logger := log.Default()
 	logger.Println("Building database")
-	var entries []Entry
+	// keys, entries
+	var keys []string
+	entries := map[string]string{}
 	// get files in directory and read them
 	directory = strings.TrimRight(directory, "/") // we don't need that last / -> if '/' is used as directory, you are dumb.
 	entriesDirFs := os.DirFS(directory)
-	files, err := fs.Glob(entriesDirFs, "*")
+	keys, err := fs.Glob(entriesDirFs, "*")
 	if err != nil { logger.Panicln(err) }
-	for _, f := range files {
-		contentB, err := os.ReadFile(directory + "/" + f)
+	for _, k := range keys {
+		contentB, err := os.ReadFile(directory + "/" + k)
 		if err != nil { logger.Panicln(err) }
-		entries = append(entries, Entry{Name: f, Content: string(contentB)})
+		entries[k] = string(contentB)
 	}
-	return Database{Entries: entries}
+	// create bleve index
+	return Database{Keys: keys, Entries: entries}
 }
