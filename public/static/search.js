@@ -35,7 +35,7 @@
         // make request
         const response = await fetch("/search/" + query);
         if (!response.ok) {
-            throw new Error("Couldn't search, status code ", response.status);
+            throw new Error(`Search API returned status code ${response.status}`);
         }
         let result = await response.text();
         updateSearchResults(result.split('\n'));
