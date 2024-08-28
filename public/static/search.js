@@ -1,3 +1,4 @@
+// Copyright (c) 2024 Julian Müller (ChaoticByte)
 (() => {
     let searchBox = document.getElementById("search-box");
     let searchResults = document.getElementById("search-results");

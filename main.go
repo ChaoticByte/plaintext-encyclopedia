@@ -1,5 +1,7 @@
 package main
 
+// Copyright (c) 2024 Julian Müller (ChaoticByte)
+
 import (
 	"html/template"
 	"log"
