@@ -30,7 +30,7 @@ func handleApplication(w http.ResponseWriter, req *http.Request) {
 	var err error
 	entryName := strings.Trim(req.URL.Path, "/")
 	if entryName != "" {
-		if strings.Contains(entryName, "/") || strings.Contains(entryName, ".") {
+		if strings.Contains(entryName, "/") || strings.Contains(entryName, "..") {
 			// path traversal
 			logger.Println("Possible path traversal attempt from", req.RemoteAddr, "to", entryName)
 			w.WriteHeader(http.StatusForbidden)
