@@ -28,6 +28,5 @@ func BuildDB(directory string) Database {
 		if err != nil { logger.Panicln(err) }
 		entries[k] = string(contentB)
 	}
-	// create bleve index
 	return Database{Keys: keys, Entries: entries}
 }
