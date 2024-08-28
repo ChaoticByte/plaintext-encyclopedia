@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 	"strings"
 )
 
@@ -28,21 +29,28 @@ func loadTemplate() {
 func handleApplication(w http.ResponseWriter, req *http.Request) {
 	var entry string
 	var err error
-	entryName := strings.Trim(req.URL.Path, "/")
-	if entryName != "" {
-		if strings.Contains(entryName, "/") || strings.Contains(entryName, "..") {
-			// path traversal
-			logger.Println("Possible path traversal attempt from", req.RemoteAddr, "to", entryName)
-			w.WriteHeader(http.StatusForbidden)
-			return
-		}
+	entryName := path.Base(req.URL.Path)
+	if entryName != "/" {
 		// load entry
 		entry = db.Entries[entryName]
+		if entry == "" { // redirect if entry doesn't exist (or is empty)
+			http.Redirect(w, req, "/", http.StatusTemporaryRedirect)
+		}
 	}
 	err = appTemplate.ExecuteTemplate(
 		w, "app",
 		TemplateData{TOC: db.Keys, Entry: entry, Title: MainTitle, EntryTitle: entryName})
 	if err != nil { logger.Println(err) }
+}
+
+func handleSearchAPI(w http.ResponseWriter, req *http.Request) {
+	searchQuery := path.Base(req.URL.Path)
+	if searchQuery == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	results := db.search(searchQuery)
+	w.Write([]byte(strings.Join(results, "\n")))
 }
 
 func main() {
@@ -57,6 +65,7 @@ func main() {
 	http.Handle("/static/", staticHandler)
 	// handle application
 	http.HandleFunc("/", handleApplication)
+	http.HandleFunc("/search/", handleSearchAPI)
 	// start server
 	logger.Println("Starting server on", ServerListen)
 	err := http.ListenAndServe(ServerListen, nil)

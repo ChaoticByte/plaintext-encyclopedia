@@ -17,11 +17,16 @@
     </div>
 </div>
 {{- else -}}
-<div class="toc">
+<div class="home-main">
+    <input type="text" id="search-box" placeholder="search">
+    <div id="search-results" class="hidden"></div>
+    <div class="toc" id="toc">
     {{- range .TOC -}}
         <div><a href="{{ . }}">{{ . }}</a></div>
     {{- end -}}
     </div>
+</div>
+<script src="/static/search.js"></script>
 {{- end}}
 </body>
 </html>

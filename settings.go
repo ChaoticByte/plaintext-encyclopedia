@@ -1,7 +1,10 @@
 package main
 
-var ServerListen = ":7000"
-var EntriesDirectory = "./entries"
-var TemplateFile = "./public/index.html"
-var StaticDirectory = "./public/static"
-var MainTitle = "Encyclopedia"
+import "golang.org/x/text/language"
+
+const ServerListen = ":7000"
+const EntriesDirectory = "./entries"
+const TemplateFile = "./public/index.html"
+const StaticDirectory = "./public/static"
+const MainTitle = "Encyclopedia"
+var ContentLanguage = language.English

@@ -7,10 +7,11 @@ body {
     width: 100vw;
     font-family: sans-serif;
 }
-a:hover { text-decoration: underline; }
+a:hover, a:focus { text-decoration: underline; }
 a {
     color: black;
     text-decoration: none;
+    outline: none;
 }
 
 .homebtn {
@@ -36,16 +37,34 @@ a {
 }
 .content { white-space: pre-line; }
 
-.toc {
-    box-sizing: border-box;
-    padding: 2rem;
+.home-main {
     width: 100%;
+    padding: 2rem;
+    box-sizing: border-box;
+    gap: 1rem;
+}
+.home-main, .toc, #search-results {
+    display: flex;
+    flex-direction: column;
+}
+.toc, #search-results, #search-box { padding: 0 .2rem; }
+.toc, #search-results { gap: .2rem; }
+#search-box {
+    width: 100%;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #00000040;
+    height: 2rem;
+    font-size: 1rem;
+}
+#search-box:active, #search-box:focus, #search-box:hover {
+    border-bottom: 1px solid black;
 }
 
+.hidden { display: none !important; }
+
 @media only screen and (max-width: 750px) {
-    .main {
-        margin-top: 4rem;
-    }
+    .main { margin-top: 4rem; }
     .main > h1, .content {
         width: 90vw;
         max-width: unset;
