@@ -20,6 +20,7 @@ type TemplateData struct {
 	Entry string
 	Title string
 	EntryTitle string
+	Footer []template.HTML
 }
 
 func loadTemplate() {
@@ -41,7 +42,7 @@ func handleApplication(w http.ResponseWriter, req *http.Request) {
 	}
 	err = appTemplate.ExecuteTemplate(
 		w, "app",
-		TemplateData{TOC: db.Keys, Entry: entry, Title: MainTitle, EntryTitle: entryName})
+		TemplateData{TOC: db.Keys, Entry: entry, Title: MainTitle, EntryTitle: entryName, Footer: FooterContent})
 	if err != nil { logger.Println(err) }
 }
 

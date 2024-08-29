@@ -19,6 +19,7 @@
 </div>
 {{- else -}}
 <div class="home-main">
+    <h1>{{ .Title }}</h1>
     <input type="text" id="search-box" placeholder="search">
     <div id="search-results" class="hidden"></div>
     <div class="toc" id="toc">
@@ -29,5 +30,6 @@
 </div>
 <script src="/static/search.js"></script>
 {{- end}}
+<footer>{{ range .Footer }}<div>{{ . }}</div>{{ end }}</footer>
 </body>
 </html>
