@@ -62,8 +62,14 @@ footer, footer * {
     box-sizing: border-box;
     gap: 1rem;
 }
-.home-main > h1 {
+.about {
+    margin-bottom: 2rem;
+}
+.about > h1 {
     font-size: 1.6rem;
+}
+.description {
+    white-space: pre-line;
 }
 .home-main, .toc, #search-results {
     display: flex;

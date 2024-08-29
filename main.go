@@ -16,10 +16,11 @@ var appTemplate *template.Template = template.New("app")
 var db Database
 
 type TemplateData struct {
-	TOC []string
-	Entry string
 	Title string
+	SiteDescription string
+	TOC []string
 	EntryTitle string
+	Entry string
 	Footer []template.HTML
 }
 
@@ -42,7 +43,14 @@ func handleApplication(w http.ResponseWriter, req *http.Request) {
 	}
 	err = appTemplate.ExecuteTemplate(
 		w, "app",
-		TemplateData{TOC: db.Keys, Entry: entry, Title: MainTitle, EntryTitle: entryName, Footer: FooterContent})
+		TemplateData{
+			TOC: db.Keys,
+			Entry: entry,
+			Title: MainTitle,
+			EntryTitle: entryName,
+			Footer: FooterContent,
+			SiteDescription: SiteDescription,
+		})
 	if err != nil { logger.Println(err) }
 }
 
