@@ -10,12 +10,11 @@
 </head>
 <body>
 {{ if .Entry -}}
-<div class="homebtn"><a href="/">home</a></div>
 <div class="main">
     <h1>{{ .EntryTitle }}</h1>
-    <div class="content">
-        {{ .Entry }}
-    </div>
+    <div class="content">{{ .Entry }}</div>
+    <br>
+    <p><a href="/">&lt; home</a></p>
 </div>
 {{- else -}}
 <div class="home-main">

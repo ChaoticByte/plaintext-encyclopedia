@@ -1,65 +1,57 @@
 /* Copyright (c) 2024 Julian Müller (ChaoticByte) */
+:root {
+    --color-text: black;
+    --color-footer: #00000080;
+    --color-search-box-placeholder: #00000060;
+    --color-search-box-border: #00000040;
+    --background: #dfd4d0;
+    --font-family: sans-serif;
+}
 body {
-    margin: 0;
-    padding: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 100vw;
+    margin: 0;
+    padding: 0;
     min-height: 100vh;
-    font-family: sans-serif;
+    font-family: var(--font-family);
+    background: var(--background);
 }
 a:hover, a:focus { text-decoration: underline; }
 a {
-    color: black;
+    color: var(--color-text);
     text-decoration: none;
     outline: none;
 }
 footer {
-    margin-top: auto;
-    padding: 1rem;
-    box-sizing: border-box;
     display: flex;
-    justify-content: center;
     flex-wrap: wrap;
+    margin-top: auto;
+    box-sizing: border-box;
+    padding: 1rem;
 }
 footer > div {
     margin: 0 .5rem;
 }
 footer, footer * {
-    color: #00000080 !important;
+    color: var(--color-footer) !important;
     font-size: .9rem;
-    text-align: center;
-}
-
-.homebtn {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-}
-.main {
-    margin: 2rem 0;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-.main > h1, .content {
-    width: 70vw;
-    max-width: 50rem;
 }
 .main > h1 {
     font-size: 1.4rem;
-    margin-top: 1.5rem;
-    margin-bottom: .5rem;
-    text-align: center;
+    margin-top: .6rem;
+    margin-bottom: 1.5rem;
+}
+.main > h1, .content {
+    max-width: 42rem;
 }
 .content { white-space: pre-line; }
-
-.home-main {
-    width: 100%;
+.home-main, .main {
     padding: 2rem;
     box-sizing: border-box;
+}
+.home-main {
+    width: fit-content;
+    min-width: 30rem;
     gap: 1rem;
 }
 .about {
@@ -67,6 +59,8 @@ footer, footer * {
 }
 .about > h1 {
     font-size: 1.6rem;
+    margin-top: .4rem;
+    margin-bottom: 1.5rem;
 }
 .description {
     white-space: pre-line;
@@ -79,29 +73,23 @@ footer, footer * {
 .toc, #search-results { gap: .2rem; }
 #search-box {
     width: 100%;
+    height: 2rem;
     border: none;
     outline: none;
-    border-bottom: 1px solid #00000040;
-    height: 2rem;
+    border-bottom: 1px solid var(--color-search-box-border);
+    background: transparent;
     font-size: 1rem;
 }
-#search-box:active, #search-box:focus, #search-box:hover {
-    border-bottom: 1px solid black;
+#search-box::placeholder {
+    color: var(--color-search-box-placeholder);
 }
-
+#search-box:not(:placeholder-shown), #search-box:active, #search-box:focus, #search-box:hover {
+    border-bottom: 1px solid var(--color-text);
+}
 .hidden { display: none !important; }
-
 @media only screen and (max-width: 750px) {
-    .main { margin-top: 4rem; }
-    .main > h1 {
-        margin-top: unset;
-    }
     .main > h1, .content {
-        width: 90vw;
+        width: 100%;
         max-width: unset;
-    }
-    .homebtn {
-        left: unset;
-        right: 1rem;
     }
 }
