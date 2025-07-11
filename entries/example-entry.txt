@@ -1,1 +1,3 @@
+Title: Example Entry
+
 This is an example entry.
