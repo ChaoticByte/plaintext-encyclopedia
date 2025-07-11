@@ -27,6 +27,12 @@ func (db *Database) search(query string) []string { // returns keys (entry names
 	}
 	// search
 	for _, k := range db.Keys {
+		// title (k)
+		if strings.Contains(k, query) || strings.Contains(query, k) {
+			results = append(results, k)
+			continue
+		}
+		// content body
 		patternsFound := 0
 		for _, p := range queryPatterns {
 			if s, _ := p.IndexString(db.Entries[k]); s != -1 {
