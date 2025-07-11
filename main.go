@@ -18,7 +18,7 @@ var db Database
 type TemplateData struct {
 	Title string
 	SiteDescription string
-	TOC []string
+	TOC map[string]string
 	EntryTitle string
 	Entry string
 	Footer []template.HTML
@@ -33,10 +33,10 @@ func loadTemplate() {
 func handleApplication(w http.ResponseWriter, req *http.Request) {
 	var entry string
 	var err error
-	entryName := path.Base(req.URL.Path)
-	if entryName != "/" {
+	entryId := path.Base(req.URL.Path)
+	if entryId != "/" {
 		// load entry
-		entry = db.Entries[entryName]
+		entry = db.Entries[entryId]
 		if entry == "" { // redirect if entry doesn't exist (or is empty)
 			http.Redirect(w, req, "/", http.StatusTemporaryRedirect)
 		}
@@ -44,10 +44,10 @@ func handleApplication(w http.ResponseWriter, req *http.Request) {
 	err = appTemplate.ExecuteTemplate(
 		w, "app",
 		TemplateData{
-			TOC: db.Keys,
+			TOC: db.Titles,
 			Entry: entry,
 			Title: MainTitle,
-			EntryTitle: entryName,
+			EntryTitle: db.Titles[entryId],
 			Footer: FooterContent,
 			SiteDescription: SiteDescription,
 		})
@@ -60,7 +60,10 @@ func handleSearchAPI(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	results := db.search(searchQuery)
+	results := db.searchForIds(searchQuery)
+	for i, r := range results {
+		results[i] = r + "|" + db.Titles[r]
+	}
 	w.Write([]byte(strings.Join(results, "\n")))
 }
 

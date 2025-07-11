@@ -13,12 +13,12 @@ import (
 )
 
 type Database struct {
-	Keys []string
+	Titles map[string]string
 	Entries map[string]string
 	matcher *search.Matcher
 }
 
-func (db *Database) search(query string) []string { // returns keys (entry names)
+func (db *Database) searchForIds(query string) []string { // returns keys (entry names)
 	results := []string{}
 	// compile patterns
 	queryPatterns := []*search.Pattern{}
@@ -26,16 +26,18 @@ func (db *Database) search(query string) []string { // returns keys (entry names
 		queryPatterns = append(queryPatterns, db.matcher.CompileString(q))
 	}
 	// search
-	for _, k := range db.Keys {
+	for k, v := range db.Entries {
 		// title (k)
-		if strings.Contains(k, query) || strings.Contains(query, k) {
+		titleLower := strings.ToLower(db.Titles[k])
+		queryLower := strings.ToLower(query)
+		if strings.Contains(titleLower, queryLower) {
 			results = append(results, k)
 			continue
 		}
 		// content body
 		patternsFound := 0
 		for _, p := range queryPatterns {
-			if s, _ := p.IndexString(db.Entries[k]); s != -1 {
+			if s, _ := p.IndexString(v); s != -1 {
 				patternsFound++ // this pattern was found
 			}
 		}
@@ -44,6 +46,7 @@ func (db *Database) search(query string) []string { // returns keys (entry names
 			results = append(results, k)
 		}
 	}
+	slices.Sort(results)
 	return results
 }
 
@@ -58,8 +61,10 @@ func BuildDB(directory string) Database {
 	entriesDirFs := os.DirFS(directory)
 	files, err := fs.Glob(entriesDirFs, "*.txt")
 	if err != nil { logger.Panicln(err) }
-	titles := []string{}
+	titles := map[string]string{}
 	for _, f := range files {
+		k := f[:len(f)-4] // remove ".txt"
+		k = strings.ReplaceAll(k, "|", "_") // we don't want | because it is used in the search protocol
 		fileData, err := os.ReadFile(directory + "/" + f)
 		if err != nil { logger.Panicln(err) }
 		content := string(fileData)
@@ -80,14 +85,13 @@ func BuildDB(directory string) Database {
 			if len(body) < 1 {
 				body = " "
 			}
-			titles = append(titles, title)
-			entries[title] = body
+			titles[k] = title
+			entries[k] = body
 		} else {
-			title := f[:len(f)-4] // remove ".txt"
-			titles = append(titles, title)
-			entries[title] = content
+			titles[k] = k
+			entries[k] = content
 		}
 	}
 	matcher := search.New(ContentLanguage, search.IgnoreCase, search.IgnoreDiacritics)
-	return Database{Keys: titles, Entries: entries, matcher: matcher}
+	return Database{Titles: titles, Entries: entries, matcher: matcher}
 }

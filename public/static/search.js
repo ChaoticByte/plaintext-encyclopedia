@@ -7,30 +7,31 @@
     /**
      * @param {string} results
      */
-    function updateSearchResults(results) {
+    function showSearchResults(results) {
+        searchResults.innerHTML = "";
         if (results.length > 0) {
-            searchResults.innerHTML = "";
-            for (let i = 0; i < results.length; i++) {
+            results.forEach(r => {
                 let resultElem = document.createElement("div");
                 let resultAnchor = document.createElement("a");
-                resultAnchor.href = results[i]; // we should be at /, so this is right
-                resultAnchor.innerText = results[i];
+                resultAnchor.href = r[0]; // we should be at /, so this is right
+                resultAnchor.innerText = r[1];
                 resultElem.appendChild(resultAnchor);
                 searchResults.appendChild(resultElem);
-            }
-            toc.classList.add("hidden");
-            searchResults.classList.remove("hidden");
-        } else {
-            toc.classList.remove("hidden");
-            searchResults.classList.add("hidden");
+            });
         }
+        toc.classList.add("hidden");
+        searchResults.classList.remove("hidden");
+    }
+    function hideSearchResults() {
+        toc.classList.remove("hidden");
+        searchResults.classList.add("hidden");
     }
 
     async function handleSearchInput() {
         // get search query
         const query = searchBox.value;
         if (query == "") {
-            updateSearchResults([]);
+            hideSearchResults();
             return
         }
         // make request
@@ -38,8 +39,14 @@
         if (!response.ok) {
             throw new Error(`Search API returned status code ${response.status}`);
         }
-        let result = await response.text();
-        updateSearchResults(result.split('\n'));
+        let results_raw = await response.text();
+        let results = [];
+        if (results_raw.length > 0) {
+            results_raw.split('\n').forEach(r => {
+                results.push(r.split("|", 2));
+            });
+        }
+        showSearchResults(results);
     }
 
     searchBox.addEventListener("input", handleSearchInput);

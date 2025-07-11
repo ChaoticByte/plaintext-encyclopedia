@@ -25,8 +25,8 @@
     <input type="text" id="search-box" placeholder="search">
     <div id="search-results" class="hidden"></div>
     <div class="toc" id="toc">
-    {{- range .TOC -}}
-        <div><a href="{{ . }}">{{ . }}</a></div>
+    {{- range $k, $title := .TOC -}}
+        <div><a href="{{ $k }}">{{ $title }}</a></div>
     {{- end -}}
     </div>
 </div>
